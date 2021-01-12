@@ -9,12 +9,11 @@
  
 using namespace std;
 
+Difficulty *ptr;
 char guess; //Answer user inputs for question.
-int total;  //Total score.
 
 
-class Player            //Player class 
-{
+class Player  { //Player class 
     string name;
     int score;
 public:
@@ -29,8 +28,48 @@ public:
     }
 };
 
+class Difficulty {
+    public:
+        int total; //Total score.
+        virtual void updateScore(bool ans) = 0;
+        Difficulty(){
+            total = 0;
+        }  
+};
+
+class Easy: public Difficulty{
+    public:
+        void updateScore(bool ans){
+            if(ans)
+                total+=4;
+        }
+};
+
+class Hard: public Difficulty{
+    public:
+        void updateScore(bool ans){
+            if(ans)
+                total+=4;
+            else{
+                total-=1;
+            }
+        }
+};
+
+class Question{
+private:
+    string question;
+    string op1;
+    string op2;
+    string op3;
+    string op4;
+    char correct_answer;
+public:
+    void askQuestion();
+};
+
 //Inserts Player score with name in decreasing order according to score
-void insertScore(string filename, Player p){
+void insertScore(char* filename, Player p){
     Player temp;
     bool copied = false;
     fstream fin(filename, ios::in | ios::binary);
@@ -40,8 +79,8 @@ void insertScore(string filename, Player p){
         cout << "Error in opening file ";
         return;
     }
-    while(fin.read((char *)&temp, sizeof(Player))){
-        if(temp.getScore < p.getScore && !copied){
+    while(fin.read((char *)&temp, sizeof(Player) ) ){
+        if(temp.getScore() < p.getScore() && !copied){
             fout.write((char *)&p, sizeof(Player));
             copied = true;
         }
@@ -55,44 +94,23 @@ void insertScore(string filename, Player p){
     rename("temp.dat", filename);
 }
 
-void updateScore(){
-    
-}
-
-//4 possible answers, correct answer and question score.
-class Question{
-public:
-    void setValues(string, string, string, string, string, char, int); 
-    void askQuestion(); 
-
-private:
-    string Question_Text;
-    string answer_1;
-    string answer_2;
-    string answer_3;
-    string answer_4;
-
-    char correct_answer;
-    int Question_Score;
-};
-
 int main()
 {
-//     cout << R"(
-//  _    _      _                            _          _   _            _____              _____       _     
-// | |  | |    | |                          | |        | | | |          /  __ \ _     _    |  _  |     (_)    
-// | |  | | ___| | ___ ___  _ __ ___   ___  | |_ ___   | |_| |__   ___  | /  \/| |_ _| |_  | | | |_   _ _ ____
-// | |/\| |/ _ \ |/ __/ _ \| '_ ` _ \ / _ \ | __/ _ \  | __| '_ \ / _ \ | |  |_   _|_   _| | | | | | | | |_  /
-// \  /\  /  __/ | (_| (_) | | | | | |  __/ | || (_) | | |_| | | |  __/ | \__/\|_|   |_|   \ \/' / |_| | |/ / 
-//  \/  \/ \___|_|\___\___/|_| |_| |_|\___|  \__\___/   \__|_| |_|\___|  \____/             \_/\_\\__,_|_/___|
-
-// ----------------------------------------------By: Joshua Torres---------------------------------------------
-//     )" << "\n";
+    //Loading the questions
+    ifstream loadQ("Easy_Questions.dat", ios::in | ios::binary);
+    if(!loadQ) {
+        cout << "Cannot open file.\n";
+        return 1;
+    }
+    Question q[3];
+    for(int i = 0; i<3; i++)
+        loadQ.read((char *) &q[i], sizeof(Question));
+    
 
     cout << "Press enter to start...\n";
     cin.get();
 
-    //Get the user's name.
+    //User's name
     string name;
     cout << "What's your name?\n";
     cin >> name;
@@ -117,272 +135,48 @@ int main()
         cin.ignore();
         cin.get();
         return 0;
-    }//Else, quiz ends.
+    }
 
-    //Instances of the questions. 
-    //25 questions total generated for this quiz. 
-    Question q1;
-    Question q2;
-    Question q3;
-    Question q4;
-    Question q5;
-    Question q6;
-    Question q7;
-    Question q8;
-    Question q9;
-    Question q10;
-    Question q11;
-    Question q12;
-    Question q13;
-    Question q14;
-    Question q15;
-    Question q16;
-    Question q17;
-    Question q18;
-    Question q19;
-    Question q20;
-    Question q21;
-    Question q22;
-    Question q23;
-    Question q24;
-    Question q25;
+    string respond;
+    cout << "Enter 'Easy' for easy level and 'Hard' for Hard level.\n";
+    cin >> respond;
+    Easy easy;
+    Hard hard;
 
-    //Calling the member function setValues. 
-    //Question is set, 4 answer choices, the correct char answer, 4 points per question.
-    q1.setValues("1. What command prints something to the screen?",
-        "cin",
-        "cout",
-        "char",
-        "print",
-        'b',
-        4);
+    if (respond == "Easy" || respond == "easy") {
+        ptr = &easy;
+        cout << "\n";
+        cout << "Good luck!\n";
+        cout << "\n";
+        cout << "Press enter to continue.";
+        cin.get();
+        cin.ignore();
+    }else if(respond == "Hard" || respond == "hard"){
+        ptr = &hard;
+        cout << "\n";
+        cout << "Good luck!\n";
+        cout << "\n";
+        cout << "Press enter to continue.";
+        cin.get();
+        cin.ignore();
+    }
+    else{
+        cout << "\n";
+        cout << "Goodbye!\n";
+        cin.ignore();
+        cin.get();
+        return 0;
+    }
 
-    q2.setValues("2. Which of the following categories does C++ belong to?",
-        "Operating System",
-        "High-level programming language",
-        "low-level programming language",
-        "Compiler",
-        'b',
-        4);
-
-    q3.setValues("3. Which command is correctly written?",
-        "cout >>",
-        "cin <<",
-        "cout <>",
-        "cin >>",
-        'd',
-        4);
-
-    q4.setValues("4. What is this called, <iostream>?",
-        "directive",
-        "pre-processor directive",
-        "file",
-        "command",
-        'b',
-        4);
-
-    q5.setValues("5. What punctuation ends most lines of code?",
-        " . ",
-        " ; ",
-        " : ",
-        " ' ",
-        'b',
-        4);
-
-    q6.setValues("6. Which of the following is a correct comment?",
-        "*/ Comments */",
-        "** Comment **",
-        "/* Comment */",
-        "{ Comment }",
-        'c',
-        4);
-
-    q7.setValues("7. Which of the following is the boolean operator for logical-and?",
-        "&",
-        "|",
-        "&&",
-        "|&",
-        'c',
-        4);
-
-    q8.setValues("8. Which of the following shows the correct syntax for an if statement?",
-        "if expression",
-        "if {expression",
-        "if (expression)",
-        "expression if",
-        'c',
-        4);
-
-    q9.setValues("9. How many times is a do while loop guaranteed to loop?",
-        "1",
-        "0",
-        "Infinitely",
-        "Variable",
-        'a',
-        4);
-
-    q10.setValues("10. A subscipt is a(n) __________ .",
-        "element in an array",
-        "alternate name for an array",
-        "number that represents the highest value stored within an array",
-        "number that indicates the position of the particular item in an array",
-        'd',
-        4);
-
-    q11.setValues("11. Which of the following correctly declares an array?",
-        "int anarray[10];",
-        "int anarray",
-        "anarray{10};",
-        "array anarray[10];",
-        'a',
-        4);
-
-    q12.setValues("12. What is the index number of the last element of an array with 29 elements?",
-        "29",
-        "28",
-        "0",
-        "Programmer-defined",
-        'b',
-        4);
-
-    q13.setValues("13. Which is not a loop structure?",
-        "for",
-        "do while",
-        "while",
-        "repeat until",
-        'd',
-        4);
-
-    q14.setValues("14. When does the code block following while(x < 100) execute?",
-        "When x is less than one hundred",
-        "When x is greater than one hundred",
-        "When x is equal to one hundred",
-        "While it wishes",
-        'a',
-        4);
-
-    q15.setValues("15. Most programmers use a for loop __________ .",
-        "for every loop they write",
-        "when a loop will not repeat",
-        "when they do not know the exact number of times a loop will repeat",
-        "when they know the exact number of times a loop will repeat",
-        'd',
-        4);
-
-    q16.setValues("16. Adding 1 to a  variable is also called __________ it.",
-        "digesting",
-        "incrementing",
-        "decrementing",
-        "resetting",
-        'b',
-        4);
-
-    q17.setValues("17. What is required to avoid falling through from one case to the next?",
-        "end;",
-        "break;",
-        "Stop;",
-        "A semicolon",
-        'b',
-        4);
-
-    q18.setValues("18. A __________ is a variable that you set to indicate whether some event has occured.",
-        "subscript",
-        "banner",
-        "counter",
-        "flag",
-        'd',
-        4);
-
-    q19.setValues("19. Identify the C++ compiler of Linux.",
-        "cpp",
-        "g++",
-        "Borland",
-        "vc++",
-        'b',
-        4);
-
-    q20.setValues("20. What is the size of 'int'? ",
-        "2",
-        "4",
-        "8",
-        "Compiler dependent",
-        'd',
-        4);
-
-    q21.setValues("21. Which data type can be used to hold a wide character in C++?",
-        "unsigned char;",
-        "int",
-        "wchar",
-        "none of the above.",
-        'c',
-        4);
-
-    q22.setValues("22. C++ does not support the following",
-        "Multilevel inheritance",
-        "Hierarchical inheritance",
-        "Hybrid inheritance",
-        "None of the above.",
-        'd',
-        4);
-
-    q23.setValues("23. Which is not a protection level provided by classes in C++?",
-        "protected",
-        "hidden",
-        "private",
-        "public",
-        'b',
-        4);
-
-    q24.setValues("24. What purpose do classes serve?",
-        "data encapsulation",
-        "providing a convenient way of modeling real-world objects",
-        "simplifying code reuse",
-        "all of the above",
-        'd',
-        4);
-
-    q25.setValues("25. Who developed the C++ language?",
-        "Steve Jobs",
-        "Linus Torvalds",
-        "Bill Gates",
-        "Bjarne Stroustrup",
-        'd',
-        4);
-
-    //Calling askQuestion member function. 
-    q1.askQuestion();
-    q2.askQuestion();
-    q3.askQuestion();
-    q4.askQuestion();
-    q5.askQuestion();
-    q6.askQuestion();
-    q7.askQuestion();
-    q8.askQuestion();
-    q9.askQuestion();
-    q10.askQuestion();
-    q11.askQuestion();
-    q12.askQuestion();
-    q13.askQuestion();
-    q14.askQuestion();
-    q15.askQuestion();
-    q16.askQuestion();
-    q17.askQuestion();
-    q18.askQuestion();
-    q19.askQuestion();
-    q20.askQuestion();
-    q21.askQuestion();
-    q22.askQuestion();
-    q23.askQuestion();
-    q24.askQuestion();
-    q25.askQuestion();
+    for(int i = 0; i<3; i++)
+        q[i].askQuestion();
 
     //Final score displayed when user finishes quiz.
-    cout << "Your Total Score is " << total << " out of 100!\n";
+    cout << "Your Total Score is " << ptr->total << " out of 100!\n";
     cout << "\n";
 
     //User scores above a 60, user passes the quiz.
-    //Display message created with ASCII art generator.
-    if (total > 60) {
+    if (ptr->total > 60) {
         cout << R"(
 
 __  __               ____                           ____
@@ -407,26 +201,13 @@ __  __               ____                           ____
     return 0;
 }
 
-//Function called for question guidelines. 
-void Question::setValues(string q, string a1, string a2, string a3, string a4, char ca, int pa)
-{
-    Question_Text = q;
-    answer_1 = a1;
-    answer_2 = a2;
-    answer_3 = a3;
-    answer_4 = a4;
-    correct_answer = ca;
-    Question_Score = pa;
-}
-//Format for possible answers displayed when program executes. 
-void Question::askQuestion()
-{
+void Question::askQuestion(){
     cout << "\n";
-    cout << Question_Text << "\n";
-    cout << "a. " << answer_1 << "\n";
-    cout << "b. " << answer_2 << "\n";
-    cout << "c. " << answer_3 << "\n";
-    cout << "d. " << answer_4 << "\n";
+    cout << question << "\n";
+    cout << "a. " << op1 << "\n";
+    cout << "b. " << op2 << "\n";
+    cout << "c. " << op3 << "\n";
+    cout << "d. " << op4 << "\n";
     cout << "\n";
 
     //User enters their answer.
@@ -436,7 +217,7 @@ void Question::askQuestion()
     if (guess == correct_answer) {
         cout << "\n";
         cout << "Correct!" << "\n";
-        total = total + Question_Score;
+        ptr->updateScore(true);
         cout << "\n";
         cout << "Press enter to continue." << "\n";
         cin.get();
@@ -447,10 +228,11 @@ void Question::askQuestion()
     {
         cout << "\n";
         cout << "Sorry, you're wrong..." << "\n";
+        ptr->updateScore(false);
         cout << "The correct answer is " << correct_answer << "." << "\n";
         cout << "\n";
         cout << "Press enter to continue." << "\n";
         cin.get();
         cin.ignore();
     }
-}
+} 
