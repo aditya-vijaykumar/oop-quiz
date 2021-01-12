@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <conio.h>
+#include <cstdio>
 using namespace std;
 
 class Question
@@ -14,17 +15,21 @@ class Question
     char correct_answer;
 public:
     void enter(){
-        cout << "Enter question : ";
-        cin >> question;
-        cout << "Enter option a : ";
-        cin >> op1;
-        // getch();
-        cout << "Enter option b : ";
-        cin >> op2;
-        cout << "Enter option c : ";
-        cin >> op3;
+        cout << "Enter question :";
+        getline(cin, question, '$');
+        
+        cout <<"Enter option a :";
+        getline(cin, op1, '$');
+       
+        cout<< "Enter option b : ";
+        getline(cin, op2, '$');
+
+        cout<< "Enter option c : ";
+        getline(cin, op3, '$');
+
         cout << "Enter option d : ";
-        cin >> op4;
+        getline(cin, op4, '$');
+
         cout << "Enter correct answer : ";
         cin >> correct_answer;
     }
@@ -41,8 +46,10 @@ int main(){
     Question q[n];
     for(int i=0; i<n; i++)
         q[i].enter();
+
     // for(int i=0; i<n; i++)
-    //     q[i].disp();        
+    //     q[i].disp();      
+      
     ofstream fout(filename, ios::binary | ios::out);
     if(!fout)
     {   

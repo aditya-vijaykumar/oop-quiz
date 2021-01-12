@@ -1,5 +1,6 @@
 #include <iostream> 
 #include <string>
+#include <fstream>
 
 #define easyScoreFile "Easy_Score.dat"
 #define hardScoreFile "Hard_Score.dat"
@@ -52,6 +53,10 @@ void insertScore(string filename, Player p){
     fin.close();
     remove(filename);
     rename("temp.dat", filename);
+}
+
+void updateScore(){
+    
 }
 
 //4 possible answers, correct answer and question score.
@@ -375,10 +380,9 @@ int main()
     cout << "Your Total Score is " << total << " out of 100!\n";
     cout << "\n";
 
-    //User scores above a 69, user passes the quiz.
+    //User scores above a 60, user passes the quiz.
     //Display message created with ASCII art generator.
-    //Link: http://patorjk.com/software/taag/#p=display&f=Graffiti&t=Type%20Something%20
-    if (total > 69) {
+    if (total > 60) {
         cout << R"(
 
 __  __               ____                           ____
