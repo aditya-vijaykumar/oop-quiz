@@ -1,23 +1,71 @@
 #include <iostream> 
 #include <string>
 
+#define easyScoreFile "Easy_Score.dat"
+#define hardScoreFile "Hard_Score.dat"
+#define easyFile "Easy_Questions.dat"
+#define hardFile "Hard_Questions.dat"
+ 
+using namespace std;
 
 char guess; //Answer user inputs for question.
 int total;  //Total score.
 
 
+class Player            //Player class 
+{
+    string name;
+    int score;
+public:
+    Player(){
+        score = 0;
+    }
+    void setScore(int newScore){
+        score = newScore;
+    }
+    int getScore(){
+        return score;
+    }
+};
+
+//Inserts Player score with name in decreasing order according to score
+void insertScore(string filename, Player p){
+    Player temp;
+    bool copied = false;
+    fstream fin(filename, ios::in | ios::binary);
+    fstream fout("temp.dat", ios::out | ios::binary);
+    if(!fin || !fout)
+    {
+        cout << "Error in opening file ";
+        return;
+    }
+    while(fin.read((char *)&temp, sizeof(Player))){
+        if(temp.getScore < p.getScore && !copied){
+            fout.write((char *)&p, sizeof(Player));
+            copied = true;
+        }
+        fout.write((char *)&temp, sizeof(Player));
+    }
+    if(!copied)
+        fout.write((char *) &p, sizeof(Player));
+    fout.close();
+    fin.close();
+    remove(filename);
+    rename("temp.dat", filename);
+}
+
 //4 possible answers, correct answer and question score.
 class Question{
 public:
-    void setValues(std::string, std::string, std::string, std::string, std::string, char, int); 
+    void setValues(string, string, string, string, string, char, int); 
     void askQuestion(); 
 
 private:
-    std::string Question_Text;
-    std::string answer_1;
-    std::string answer_2;
-    std::string answer_3;
-    std::string answer_4;
+    string Question_Text;
+    string answer_1;
+    string answer_2;
+    string answer_3;
+    string answer_4;
 
     char correct_answer;
     int Question_Score;
@@ -25,46 +73,44 @@ private:
 
 int main()
 {
-    //Program Title designed with an ASCII art generator.
-    //Link: http://patorjk.com/software/taag/#p=display&f=Graffiti&t=Type%20Something%20
-    std::cout << R"(
- _    _      _                            _          _   _            _____              _____       _     
-| |  | |    | |                          | |        | | | |          /  __ \ _     _    |  _  |     (_)    
-| |  | | ___| | ___ ___  _ __ ___   ___  | |_ ___   | |_| |__   ___  | /  \/| |_ _| |_  | | | |_   _ _ ____
-| |/\| |/ _ \ |/ __/ _ \| '_ ` _ \ / _ \ | __/ _ \  | __| '_ \ / _ \ | |  |_   _|_   _| | | | | | | | |_  /
-\  /\  /  __/ | (_| (_) | | | | | |  __/ | || (_) | | |_| | | |  __/ | \__/\|_|   |_|   \ \/' / |_| | |/ / 
- \/  \/ \___|_|\___\___/|_| |_| |_|\___|  \__\___/   \__|_| |_|\___|  \____/             \_/\_\\__,_|_/___|
+//     cout << R"(
+//  _    _      _                            _          _   _            _____              _____       _     
+// | |  | |    | |                          | |        | | | |          /  __ \ _     _    |  _  |     (_)    
+// | |  | | ___| | ___ ___  _ __ ___   ___  | |_ ___   | |_| |__   ___  | /  \/| |_ _| |_  | | | |_   _ _ ____
+// | |/\| |/ _ \ |/ __/ _ \| '_ ` _ \ / _ \ | __/ _ \  | __| '_ \ / _ \ | |  |_   _|_   _| | | | | | | | |_  /
+// \  /\  /  __/ | (_| (_) | | | | | |  __/ | || (_) | | |_| | | |  __/ | \__/\|_|   |_|   \ \/' / |_| | |/ / 
+//  \/  \/ \___|_|\___\___/|_| |_| |_|\___|  \__\___/   \__|_| |_|\___|  \____/             \_/\_\\__,_|_/___|
 
-----------------------------------------------By: Joshua Torres---------------------------------------------
-    )" << "\n";
+// ----------------------------------------------By: Joshua Torres---------------------------------------------
+//     )" << "\n";
 
-    std::cout << "Press enter to start...\n";
-    std::cin.get();
+    cout << "Press enter to start...\n";
+    cin.get();
 
     //Get the user's name.
-    std::string name;
-    std::cout << "What's your name?\n";
-    std::cin >> name;
-    std::cout << "\n";
+    string name;
+    cout << "What's your name?\n";
+    cin >> name;
+    cout << "\n";
 
     //Ask if user wants to start quiz.
-    std::string respond;
-    std::cout << "Are you ready to start the quiz, " << name << "? Yes/No.\n";
-    std::cin >> respond;
+    string respond;
+    cout << "Are you ready to start the quiz, " << name << "? Yes/No.\n";
+    cin >> respond;
 
     //If user says yes, the quiz begins.
     if (respond == "Yes" || respond == "yes") {
-        std::cout << "\n";
-        std::cout << "Good luck!\n";
-        std::cout << "\n";
-        std::cout << "Press enter to continue.";
-        std::cin.get();
-        std::cin.ignore();
+        cout << "\n";
+        cout << "Good luck!\n";
+        cout << "\n";
+        cout << "Press enter to continue.";
+        cin.get();
+        cin.ignore();
     }else{
-        std::cout << "\n";
-        std::cout << "Goodbye!\n";
-        std::cin.ignore();
-        std::cin.get();
+        cout << "\n";
+        cout << "Goodbye!\n";
+        cin.ignore();
+        cin.get();
         return 0;
     }//Else, quiz ends.
 
@@ -326,14 +372,14 @@ int main()
     q25.askQuestion();
 
     //Final score displayed when user finishes quiz.
-    std::cout << "Your Total Score is " << total << " out of 100!\n";
-    std::cout << "\n";
+    cout << "Your Total Score is " << total << " out of 100!\n";
+    cout << "\n";
 
     //User scores above a 69, user passes the quiz.
     //Display message created with ASCII art generator.
     //Link: http://patorjk.com/software/taag/#p=display&f=Graffiti&t=Type%20Something%20
     if (total > 69) {
-        std::cout << R"(
+        cout << R"(
 
 __  __               ____                           ____
 \ \/ /___  __  __   / __ \____ ______________  ____/ / /
@@ -342,23 +388,23 @@ __  __               ____                           ____
 /_/\____/\__,_/  /_/    \__,_/____/____/\___/\__,_(_)   
 
     )" << "\n";
-        std::cout << "\n";
-        std::cin.get();
-        std::cin.ignore();
+        cout << "\n";
+        cin.get();
+        cin.ignore();
         return 0;
     }
     else
     {
-        std::cout << "You failed... Sorry, better luck next time.\n";
-        std::cout << "\n";
+        cout << "You failed... Sorry, better luck next time.\n";
+        cout << "\n";
     }
-    std::cin.get();
-    std::cin.ignore();
+    cin.get();
+    cin.ignore();
     return 0;
 }
 
 //Function called for question guidelines. 
-void Question::setValues(std::string q, std::string a1, std::string a2, std::string a3, std::string a4, char ca, int pa)
+void Question::setValues(string q, string a1, string a2, string a3, string a4, char ca, int pa)
 {
     Question_Text = q;
     answer_1 = a1;
@@ -371,36 +417,36 @@ void Question::setValues(std::string q, std::string a1, std::string a2, std::str
 //Format for possible answers displayed when program executes. 
 void Question::askQuestion()
 {
-    std::cout << "\n";
-    std::cout << Question_Text << "\n";
-    std::cout << "a. " << answer_1 << "\n";
-    std::cout << "b. " << answer_2 << "\n";
-    std::cout << "c. " << answer_3 << "\n";
-    std::cout << "d. " << answer_4 << "\n";
-    std::cout << "\n";
+    cout << "\n";
+    cout << Question_Text << "\n";
+    cout << "a. " << answer_1 << "\n";
+    cout << "b. " << answer_2 << "\n";
+    cout << "c. " << answer_3 << "\n";
+    cout << "d. " << answer_4 << "\n";
+    cout << "\n";
 
     //User enters their answer.
-    std::cout << "What is your answer?" << "\n";
-    std::cin >> guess;
+    cout << "What is your answer?" << "\n";
+    cin >> guess;
     //If their answer is correct, message is displayed and 4 points are added to their score.
     if (guess == correct_answer) {
-        std::cout << "\n";
-        std::cout << "Correct!" << "\n";
+        cout << "\n";
+        cout << "Correct!" << "\n";
         total = total + Question_Score;
-        std::cout << "\n";
-        std::cout << "Press enter to continue." << "\n";
-        std::cin.get();
-        std::cin.ignore();
+        cout << "\n";
+        cout << "Press enter to continue." << "\n";
+        cin.get();
+        cin.ignore();
     }
     else //If their answer is incorrect, message is displayed, no points added. 
          //Correct answer displayed. 
     {
-        std::cout << "\n";
-        std::cout << "Sorry, you're wrong..." << "\n";
-        std::cout << "The correct answer is " << correct_answer << "." << "\n";
-        std::cout << "\n";
-        std::cout << "Press enter to continue." << "\n";
-        std::cin.get();
-        std::cin.ignore();
+        cout << "\n";
+        cout << "Sorry, you're wrong..." << "\n";
+        cout << "The correct answer is " << correct_answer << "." << "\n";
+        cout << "\n";
+        cout << "Press enter to continue." << "\n";
+        cin.get();
+        cin.ignore();
     }
 }
