@@ -1,11 +1,13 @@
 #include <iostream> 
 #include <string>
+#include <string.h>
 #include <fstream>
 
 #define easyScoreFile "Easy_Score.dat"
 #define hardScoreFile "Hard_Score.dat"
 #define easyFile "Easy_Questions.dat"
 #define hardFile "Hard_Questions.dat"
+#define n 3
  
 using namespace std;
 
@@ -13,15 +15,22 @@ Difficulty *ptr;
 char guess; //Answer user inputs for question.
 
 
-class Player  { //Player class 
+class Player            //Player class 
+{
     string name;
     int score;
 public:
     Player(){
         score = 0;
     }
+    void setName(string currentName){
+        name = currentName;
+    }
     void setScore(int newScore){
         score = newScore;
+    }
+    string getName(){
+        return name;
     }
     int getScore(){
         return score;
@@ -94,23 +103,30 @@ void insertScore(char* filename, Player p){
     rename("temp.dat", filename);
 }
 
+//Displays the content of the binary file containing all the scores 
+void displayScore(char* filename)
+{
+    Player temp;
+    ifstream fin(filename, ios::in | ios::binary);
+    if(!fin){
+        cout << "Error in opening file";
+        return;
+    }
+    cout << "Name" << '\t' << "Score" << '\n';
+    while(fin.read((char *) &temp, sizeof(Player)))
+        cout << temp.getName() << '\t' << temp.getScore() << '\n';
+
+    fin.close();
+}
+
 int main()
 {
-    //Loading the questions
-    ifstream loadQ("Easy_Questions.dat", ios::in | ios::binary);
-    if(!loadQ) {
-        cout << "Cannot open file.\n";
-        return 1;
-    }
-    Question q[3];
-    for(int i = 0; i<3; i++)
-        loadQ.read((char *) &q[i], sizeof(Question));
+    system("cls");
     
-
     cout << "Press enter to start...\n";
     cin.get();
 
-    //User's name
+    //Get the user's name.
     string name;
     cout << "What's your name?\n";
     cin >> name;
@@ -132,17 +148,17 @@ int main()
     }else{
         cout << "\n";
         cout << "Goodbye!\n";
-        cin.ignore();
         cin.get();
+        cin.ignore();
         return 0;
-    }
+    }//Else, quiz ends.4
 
-    string respond;
-    cout << "Enter 'Easy' for easy level and 'Hard' for Hard level.\n";
-    cin >> respond;
     Easy easy;
     Hard hard;
 
+    cout << "Enter 'Easy' for easy level and 'Hard' for Hard level.\n";
+    cin >> respond;
+    
     if (respond == "Easy" || respond == "easy") {
         ptr = &easy;
         cout << "\n";
@@ -168,38 +184,30 @@ int main()
         return 0;
     }
 
-    for(int i = 0; i<3; i++)
+    //Loading the questions
+    ifstream loadQ(easyFile, ios::in | ios::binary);
+    if(!loadQ){
+        cout << "Error in opening file ";
+        return -1;
+    }
+    Question q[n];
+    for(int i=0; i<n; i++){
+        loadQ.read((char *) &q[i], sizeof(Question));
         q[i].askQuestion();
-
+    }
+    
     //Final score displayed when user finishes quiz.
     cout << "Your Total Score is " << ptr->total << " out of 100!\n";
     cout << "\n";
 
-    //User scores above a 60, user passes the quiz.
-    if (ptr->total > 60) {
-        cout << R"(
-
-__  __               ____                           ____
-\ \/ /___  __  __   / __ \____ ______________  ____/ / /
- \  / __ \/ / / /  / /_/ / __ `/ ___/ ___/ _ \/ __  / / 
- / / /_/ / /_/ /  / ____/ /_/ (__  |__  )  __/ /_/ /_/  
-/_/\____/\__,_/  /_/    \__,_/____/____/\___/\__,_(_)   
-
-    )" << "\n";
-        cout << "\n";
-        cin.get();
-        cin.ignore();
-        return 0;
-    }
-    else
-    {
-        cout << "You failed... Sorry, better luck next time.\n";
-        cout << "\n";
-    }
-    cin.get();
-    cin.ignore();
+    Player newPlayer;
+    newPlayer.setName(name);
+    newPlayer.setScore(ptr->total);
+    insertScore(easyScoreFile, newPlayer);
+    displayScore(easyScoreFile);
     return 0;
 }
+
 
 void Question::askQuestion(){
     cout << "\n";
