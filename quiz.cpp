@@ -66,12 +66,6 @@ class Hard: public Difficulty{
 
 struct Question{
 public:
-    // char question[256];
-    // char op1[256];
-    // char op2[256];
-    // char op3[256];
-    // char op4[256];
-    // char correct_answer;
     string question;
     string op1;
     string op2;
@@ -128,45 +122,6 @@ void displayScore(char* filename)
 Difficulty *ptr; //Base class pointer for virtualization
 string guess; //Answer user inputs for question.
 
-
-void something(){
-     //Loading the questions
-    // ifstream loadQ("Easy_Questions", ios::in | ios::binary);
-    // if(!loadQ){
-    //     cout << "Error in opening file ";
-    //     return -1;
-    // }
-    // Question q[n];
-    // for(int i=0; i<n; i++){
-    //     loadQ.read((char *) &q[i], sizeof(Question));
-    //     q[i].askQuestion();
-    // }
-    Easy easy;
-    ptr = &easy;
-
-    Question q[n];
-    ifstream file("input.txt");
-    string str;
-  for(int i=0; i<n; i++){
-    getline(file, q[i].question);
-    getline(file, q[i].op1);
-    getline(file, q[i].op2);
-    getline(file, q[i].op3);
-    getline(file, q[i].op4);
-    getline(file, q[i].correct_answer);
-   
-    q[i].askQuestion();
-  }
-//     getline(file, q2.question);
-//     getline(file, q2.op1);
-//     getline(file, q2.op2);
-//     getline(file, q2.op3);
-//     getline(file, q2.op4);
-//     getline(file, q2.correct_answer);
-
-//   q2.askQuestion();
-
-}
 
 int main()
 {
