@@ -1,0 +1,30 @@
+1. For constructor overloading, each constructor must differ in ___________ and __________
+Number of arguments and type of arguments
+Number of arguments and return type
+Return type and type of arguments
+Return type and definition
+a
+2. Which among the following is true for copy constructor?
+The argument object is passed by reference
+It can be defined with zero arguments
+Used when an object is passed by value to a function
+Used when a function returns an object
+b
+3. Is it necessary that all the abstract methods must be defined from an abstract class?
+Yes, depending on code
+Yes, always
+No, never
+No, if function is not used, no definition is required
+b
+4. Why do we use constructor overloading?
+To use different types of constructors
+Because it’s a feature provided
+To initialize the object in different ways
+To differentiate one constructor from another
+c
+5. Which is known as a generic class?
+Abstract class
+Final class
+Template class
+Efficient Code
+c

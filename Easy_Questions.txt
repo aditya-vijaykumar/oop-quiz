@@ -1,0 +1,30 @@
+1. In which access should a constructor be defined, so that object of the class can be created in any function?
+Public
+Protected
+Private
+Any access specifier will work
+a
+2. Which among the following best describes constructor overloading?
+Defining one constructor in each class of a program
+Defining more than one constructor in single class
+Defining more than one constructor in single class with different signature
+Defining destructor with each constructor
+c
+3. Which among the following is possible way to overload constructor?
+Define default constructor, 1 parameter constructor and 2 parameter constructor
+Define default constructor, zero argument constructor and 1 parameter constructor
+Define default constructor, and 2 other parameterized constructors with same signature
+Define 2 default constructors
+a
+4. Which among the following best describes abstract classes?
+If a class has more than one virtual function, it’s abstract class
+If a class have only one pure virtual function, it’s abstract class
+If a class has at least one pure virtual function, it’s abstract class
+If a class has all the pure virtual functions only, then it’s abstract class
+c
+5. How many basic types of inheritance are provided as OOP feature?
+4
+3
+2
+1
+a
