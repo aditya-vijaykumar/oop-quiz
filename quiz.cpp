@@ -3,17 +3,15 @@
 #include <string.h>
 #include <fstream>
 
-#define easyScoreFile "Easy_Score.dat"
-#define hardScoreFile "Hard_Score.dat"
-#define easyFile "Easy_Questions.dat"
-#define hardFile "Hard_Questions.dat"
+char easyScoreFile[256] = "Easy_Score.dat";
+char hardScoreFile[256] = "Hard_Score.dat";
+char easyFile[256] = "Easy_Questions.dat";
+char hardFile[256] = "Hard_Questions.dat";
+
+#define hardFile 
 #define n 3
  
 using namespace std;
-
-Difficulty *ptr;
-char guess; //Answer user inputs for question.
-
 
 class Player            //Player class 
 {
@@ -51,6 +49,7 @@ class Easy: public Difficulty{
         void updateScore(bool ans){
             if(ans)
                 total+=4;
+            return;
         }
 };
 
@@ -65,24 +64,31 @@ class Hard: public Difficulty{
         }
 };
 
-class Question{
-private:
+struct Question{
+public:
+    // char question[256];
+    // char op1[256];
+    // char op2[256];
+    // char op3[256];
+    // char op4[256];
+    // char correct_answer;
     string question;
     string op1;
     string op2;
     string op3;
     string op4;
-    char correct_answer;
-public:
+    string correct_answer;
+
     void askQuestion();
 };
+
 
 //Inserts Player score with name in decreasing order according to score
 void insertScore(char* filename, Player p){
     Player temp;
     bool copied = false;
     fstream fin(filename, ios::in | ios::binary);
-    fstream fout("temp.dat", ios::out | ios::binary);
+    fstream fout("temp", ios::out | ios::binary);
     if(!fin || !fout)
     {
         cout << "Error in opening file ";
@@ -119,10 +125,53 @@ void displayScore(char* filename)
     fin.close();
 }
 
+Difficulty *ptr; //Base class pointer for virtualization
+string guess; //Answer user inputs for question.
+
+
+void something(){
+     //Loading the questions
+    // ifstream loadQ("Easy_Questions", ios::in | ios::binary);
+    // if(!loadQ){
+    //     cout << "Error in opening file ";
+    //     return -1;
+    // }
+    // Question q[n];
+    // for(int i=0; i<n; i++){
+    //     loadQ.read((char *) &q[i], sizeof(Question));
+    //     q[i].askQuestion();
+    // }
+    Easy easy;
+    ptr = &easy;
+
+    Question q[n];
+    ifstream file("input.txt");
+    string str;
+  for(int i=0; i<n; i++){
+    getline(file, q[i].question);
+    getline(file, q[i].op1);
+    getline(file, q[i].op2);
+    getline(file, q[i].op3);
+    getline(file, q[i].op4);
+    getline(file, q[i].correct_answer);
+   
+    q[i].askQuestion();
+  }
+//     getline(file, q2.question);
+//     getline(file, q2.op1);
+//     getline(file, q2.op2);
+//     getline(file, q2.op3);
+//     getline(file, q2.op4);
+//     getline(file, q2.correct_answer);
+
+//   q2.askQuestion();
+
+}
+
 int main()
 {
     system("cls");
-    
+
     cout << "Press enter to start...\n";
     cin.get();
 
@@ -142,9 +191,6 @@ int main()
         cout << "\n";
         cout << "Good luck!\n";
         cout << "\n";
-        cout << "Press enter to continue.";
-        cin.get();
-        cin.ignore();
     }else{
         cout << "\n";
         cout << "Goodbye!\n";
@@ -185,19 +231,22 @@ int main()
     }
 
     //Loading the questions
-    ifstream loadQ(easyFile, ios::in | ios::binary);
-    if(!loadQ){
-        cout << "Error in opening file ";
-        return -1;
-    }
     Question q[n];
+    ifstream loadQ("input.txt");
+    string str;
     for(int i=0; i<n; i++){
-        loadQ.read((char *) &q[i], sizeof(Question));
+        getline(loadQ, q[i].question);
+        getline(loadQ, q[i].op1);
+        getline(loadQ, q[i].op2);
+        getline(loadQ, q[i].op3);
+        getline(loadQ, q[i].op4);
+        getline(loadQ, q[i].correct_answer);
+   
         q[i].askQuestion();
-    }
-    
+   }
+
     //Final score displayed when user finishes quiz.
-    cout << "Your Total Score is " << ptr->total << " out of 100!\n";
+    cout << "Your Total Score is " << ptr->total << " out of 40!\n";
     cout << "\n";
 
     Player newPlayer;

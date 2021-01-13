@@ -1,39 +1,64 @@
-#include <iostream>
 #include <fstream>
-#include <cstring>
-
+#include <iostream>
+#include <string>
+#include <conio.h>
+#include <cstdio>
 using namespace std;
 
-struct status {
-    char name[80];
-    double balance;
-    unsigned long account_num;
+class Question
+{
+   char question[256];
+    char op1[256];
+    char op2[256];
+    char op3[256];
+    char op4[256];
+    char correct_answer;
+public:
+    void enter(){
+        cout << "Enter question :";
+        cin>>question;
+        
+        cout <<"Enter option a :";
+        gets(op1);
+       
+        cout<< "Enter option b : ";
+        gets(op2);
+
+        cout<< "Enter option c : ";
+        gets(op3);
+
+        cout << "Enter option d : ";
+        gets(op4);
+
+        cout << "Enter correct answer : ";
+        cin >> correct_answer;
+    }
+    void disp(){
+        cout << question << endl << op1 << endl << op2 << endl << op3 << endl << op4 << endl << correct_answer << endl;
+    }
 };
 
-int main()
-{
-    struct status acc;
-    strcpy(acc.name, "NMIT");
-    acc.balance = 1123.23;
-    acc.account_num = 34235678;
-    // write data
-    ofstream outbal("balance", ios::out | ios::binary);
-    if(!outbal) {
-        cout << "Cannot open file.\n";
-        return 1;
+int main(){
+    string filename = "Easy_Questions.dat";
+    int n;
+    cout << "Enter number of questions : ";
+    cin >> n;
+    Question q[n];
+    for(int i=0; i<n; i++)
+        q[i].enter();
+
+    // for(int i=0; i<n; i++)
+    //     q[i].disp();      
+      
+    ofstream fout(filename, ios::binary | ios::out);
+    if(!fout)
+    {   
+        cout << "Error in opening file";   
+        return -1;
     }
-    outbal.write((char *) &acc, sizeof(struct status));
-    outbal.close();
-    // now, read back;
-    ifstream inbal("balance", ios::in | ios::binary);
-    if(!inbal) {
-        cout << "Cannot open file.\n";
-        return 1;
-    }
-    inbal.read((char *) &acc, sizeof(struct status));
-    cout << acc.name << endl;
-    cout << "Account # " << acc.account_num;
-    cout << endl << "Balance: " << acc.balance;
-    inbal.close();
+    for(int i=0; i<n; i++)
+        fout.write((char *) &q[i], sizeof(Question));
+    fout.close();
+    
     return 0;
 }
