@@ -5,21 +5,24 @@
 
 char easyScoreFile[256] = "Easy_Score.dat";
 char hardScoreFile[256] = "Hard_Score.dat";
-char easyFile[256] = "Easy_Questions.dat";
-char hardFile[256] = "Hard_Questions.dat";
+char easyFile[256] = "Easy_Questions.txt";
+char hardFile[256] = "Hard_Questions.txt";
 
-#define hardFile 
-#define n 3
- 
+#define n 5
+
 using namespace std;
 
 class Player            //Player class 
 {
     string name;
     int score;
+    int wrong;
+    int correct;
 public:
     Player(){
         score = 0;
+        wrong = 0;
+        correct = 0;
     }
     void setName(string currentName){
         name = currentName;
@@ -38,6 +41,8 @@ public:
 class Difficulty {
     public:
         int total; //Total score.
+        char file[256]; 
+        char score[256];
         virtual void updateScore(bool ans) = 0;
         Difficulty(){
             total = 0;
@@ -46,6 +51,10 @@ class Difficulty {
 
 class Easy: public Difficulty{
     public:
+        Easy(){
+            strcpy(file, easyFile);
+            strcpy(score, easyScoreFile);
+        }
         void updateScore(bool ans){
             if(ans)
                 total+=4;
@@ -55,6 +64,10 @@ class Easy: public Difficulty{
 
 class Hard: public Difficulty{
     public:
+        Hard(){
+            strcpy(file, hardFile);
+            strcpy(score, hardScoreFile);
+        }
         void updateScore(bool ans){
             if(ans)
                 total+=4;
@@ -85,7 +98,7 @@ void insertScore(char* filename, Player p){
     fstream fout("temp", ios::out | ios::binary);
     if(!fin || !fout)
     {
-        cout << "Error in opening file ";
+        cout << "insert Error in opening file ";
         return;
     }
     while(fin.read((char *)&temp, sizeof(Player) ) ){
@@ -100,7 +113,7 @@ void insertScore(char* filename, Player p){
     fout.close();
     fin.close();
     remove(filename);
-    rename("temp.dat", filename);
+    rename("temp", filename);
 }
 
 //Displays the content of the binary file containing all the scores 
@@ -109,7 +122,7 @@ void displayScore(char* filename)
     Player temp;
     ifstream fin(filename, ios::in | ios::binary);
     if(!fin){
-        cout << "Error in opening file";
+        cout << " display Error in opening file";
         return;
     }
     cout << "Name" << '\t' << "Score" << '\n';
@@ -185,9 +198,10 @@ int main()
         return 0;
     }
 
+    ifstream loadQ(ptr->file);
+
     //Loading the questions
     Question q[n];
-    ifstream loadQ("input.txt");
     string str;
     for(int i=0; i<n; i++){
         getline(loadQ, q[i].question);
@@ -201,14 +215,14 @@ int main()
    }
 
     //Final score displayed when user finishes quiz.
-    cout << "Your Total Score is " << ptr->total << " out of 40!\n";
+    cout << "Your Total Score is " << ptr->total << " out of 20!\n";
     cout << "\n";
 
     Player newPlayer;
     newPlayer.setName(name);
     newPlayer.setScore(ptr->total);
-    insertScore(easyScoreFile, newPlayer);
-    displayScore(easyScoreFile);
+    insertScore(ptr->score, newPlayer);
+    displayScore(ptr->score);
     return 0;
 }
 
@@ -230,6 +244,7 @@ void Question::askQuestion(){
         cout << "\n";
         cout << "Correct!" << "\n";
         ptr->updateScore(true);
+
         cout << "\n";
         cout << "Press enter to continue." << "\n";
         cin.get();
